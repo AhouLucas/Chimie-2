@@ -56,9 +56,15 @@ for i in range(1, U[0].shape[0]):
     plt.plot(U[:, 0], U[:, i], label=param_name + " = " + str(param_values[i-1]))
 
 plt.legend()
-plt.title(r"$U$")
 plt.xlabel("Time (min)")
-plt.ylabel("Voltage (V)")
+
+if param_name != "U":
+    plt.title(r"$U$")
+    plt.ylabel("Voltage (V)")
+else:
+    plt.title(r"$I$")
+    plt.ylabel("Current (A)")
+
 plt.grid(alpha=0.5)
 plt.savefig("Plots/U.png")
 plt.show()
