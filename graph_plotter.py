@@ -12,7 +12,7 @@ O2_speed[:, 0] = V_O2[:-1, 0]
 
 param_name = input(">> Enter the parameter name (d, I, pH, U): ")
 param_table = {
-    "d": np.array([19, 15, 11, 7]),
+    "d": np.array([19]),
     "I": np.array([1, 0.75, 0.5, 0.25]),
     "pH": np.array([13, 13.5, 14]),
     "U": np.array([30, 20, 10, 5]),
@@ -116,7 +116,7 @@ elif param_name == "I":
     farad_eff[:, 1:] = H2_speed[:, 1:]/theorical_speed[:, 1:]
 else:
     theorical_speed = np.ones(U.shape)
-    theorical_speed[:, 1:] = (24.05e3*60)*param_values/(2*96485)
+    theorical_speed[:, 1:] = (24.05e3*60)*theorical_speed[:,1:]/(2*96485)
     theorical_speed[:, 0] = U[:, 0]
     theorical_speed = theorical_speed[:-1, :]
     farad_eff = np.zeros(theorical_speed.shape)
@@ -140,24 +140,24 @@ plt.show()
 # Plot energy efficiency vs Time
 if param_name == "U" or param_name == "I":
     energy_consumption = np.copy(U)
-    energy_consumption[0,1:] = np.zeros(U.shape[1]-1)
+    energy_consumption[0,1:] = param_values*U[0,1:]*U[0,0] # U*I*t or I*U*t
     for i in range(1, energy_consumption.shape[0]):
         energy_consumption[i, 1:] = energy_consumption[i-1, 1:] + param_values*U[i, 1:]*(U[i, 0] - U[i-1, 0])*60 # J
     
     energy_eff = np.zeros(energy_consumption.shape)
     energy_eff[:, 0] = energy_consumption[:, 0]
-    energy_eff[:, 1:] = energy_consumption[:, 1:]/((285.8/24.05)*V_H2[:, 1:])
+    energy_eff[:, 1:] = 100*((285.8/24.05)*V_H2[:, 1:])/ energy_consumption[:, 1:]
 
 else:
     energy_consumption = np.ones(U.shape)
     energy_consumption[:, 0] = U[:, 0]
-    energy_consumption[0,1:] = np.zeros(U.shape[1]-1)
+    energy_consumption[0,1:] = 1*U[0,1:]*U[0,0] # 1A*U*t
     for i in range(1, energy_consumption.shape[0]):
         energy_consumption[i, 1:] = energy_consumption[i-1, 1:] + param_values*U[i, 1:]*(U[i, 0] - U[i-1, 0])*60
     
     energy_eff = np.zeros(energy_consumption.shape)
     energy_eff[:, 0] = energy_consumption[:, 0]
-    energy_eff[:, 1:] = energy_consumption[:, 1:]/((285.8/24.05)*V_H2[:, 1:])
+    energy_eff[:, 1:] = 100*((285.8/24.05)*V_H2[:, 1:])/ energy_consumption[:, 1:]
 
 
 plt.figure()
