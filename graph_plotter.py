@@ -104,7 +104,11 @@ if param_name == "U":
     theorical_speed = theorical_speed[:-1, :]
     farad_eff_H2 = np.zeros(theorical_speed.shape)
     farad_eff_H2[:, 0] = theorical_speed[:, 0]
-    farad_eff_H2[:, 1:] = H2_speed[:, 1:]/theorical_speed[:, 1:]
+    farad_eff_H2[:, 1:] = 100*H2_speed[:, 1:]/theorical_speed[:, 1:]
+
+    farad_eff_O2 = np.zeros(theorical_speed.shape)
+    farad_eff_O2[:, 0] = theorical_speed[:, 0]
+    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]*2)
 
 elif param_name == "I":
     theorical_speed = np.zeros(U.shape)
@@ -117,7 +121,7 @@ elif param_name == "I":
 
     farad_eff_O2 = np.zeros(theorical_speed.shape)
     farad_eff_O2[:, 0] = theorical_speed[:, 0]
-    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]/2)
+    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]*2)
     
 else:
     theorical_speed = np.ones(U.shape)
@@ -130,7 +134,7 @@ else:
 
     farad_eff_O2 = np.zeros(theorical_speed.shape)
     farad_eff_O2[:, 0] = theorical_speed[:, 0]
-    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]/2)
+    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]*2)
 
 plt.figure()
 for i in range(1, farad_eff_H2[0].shape[0]):
@@ -170,7 +174,7 @@ if param_name == "U" or param_name == "I":
 
     energy_eff_O2 = np.zeros(energy_consumption.shape)
     energy_eff_O2[:, 0] = energy_consumption[:, 0]
-    energy_eff_O2[:, 1:] = 100*((2*285.8/(24.05))*V_O2[:, 1:])/ energy_consumption[:, 1:]
+    energy_eff_O2[:, 1:] = 100*((2*285.8/(2*24.05))*V_O2[:, 1:])/ energy_consumption[:, 1:]
 
 else:
     energy_consumption = np.ones(U.shape)
@@ -185,7 +189,7 @@ else:
 
     energy_eff_O2 = np.zeros(energy_consumption.shape)
     energy_eff_O2[:, 0] = energy_consumption[:, 0]
-    energy_eff_O2[:, 1:] = 100*((2*285.8/(24.05))*V_O2[:, 1:])/ energy_consumption[:, 1:]
+    energy_eff_O2[:, 1:] = 100*((285.8/(2*24.05))*V_O2[:, 1:])/ energy_consumption[:, 1:]
 
 
 plt.figure()
