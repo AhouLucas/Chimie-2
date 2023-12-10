@@ -102,39 +102,59 @@ if param_name == "U":
     theorical_speed = np.copy(U)
     theorical_speed[:, 1:] = (24.05e3*60)*theorical_speed[:, 1:]/(2*96485) # mol/s -> mL/min
     theorical_speed = theorical_speed[:-1, :]
-    farad_eff = np.zeros(theorical_speed.shape)
-    farad_eff[:, 0] = theorical_speed[:, 0]
-    farad_eff[:, 1:] = H2_speed[:, 1:]/theorical_speed[:, 1:]
+    farad_eff_H2 = np.zeros(theorical_speed.shape)
+    farad_eff_H2[:, 0] = theorical_speed[:, 0]
+    farad_eff_H2[:, 1:] = H2_speed[:, 1:]/theorical_speed[:, 1:]
 
 elif param_name == "I":
     theorical_speed = np.zeros(U.shape)
     theorical_speed[:, 1:] = (24.05e3*60)*np.tile(param_values, (U.shape[0], 1))/(2*96485) # mol/s -> mL/min
     theorical_speed[:, 0] = U[:, 0]
     theorical_speed = theorical_speed[:-1, :]
-    farad_eff = np.zeros(theorical_speed.shape)
-    farad_eff[:, 0] = theorical_speed[:, 0]
-    farad_eff[:, 1:] = H2_speed[:, 1:]/theorical_speed[:, 1:]
+    farad_eff_H2 = np.zeros(theorical_speed.shape)
+    farad_eff_H2[:, 0] = theorical_speed[:, 0]
+    farad_eff_H2[:, 1:] = 100*H2_speed[:, 1:]/theorical_speed[:, 1:]
+
+    farad_eff_O2 = np.zeros(theorical_speed.shape)
+    farad_eff_O2[:, 0] = theorical_speed[:, 0]
+    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]/2)
+    
 else:
     theorical_speed = np.ones(U.shape)
     theorical_speed[:, 1:] = (24.05e3*60)*theorical_speed[:,1:]/(2*96485)
     theorical_speed[:, 0] = U[:, 0]
     theorical_speed = theorical_speed[:-1, :]
-    farad_eff = np.zeros(theorical_speed.shape)
-    farad_eff[:, 0] = theorical_speed[:, 0]
-    farad_eff[:, 1:] = H2_speed[:, 1:]/theorical_speed[:, 1:]
+    farad_eff_H2 = np.zeros(theorical_speed.shape)
+    farad_eff_H2[:, 0] = theorical_speed[:, 0]
+    farad_eff_H2[:, 1:] = 100*H2_speed[:, 1:]/theorical_speed[:, 1:]
+
+    farad_eff_O2 = np.zeros(theorical_speed.shape)
+    farad_eff_O2[:, 0] = theorical_speed[:, 0]
+    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]/2)
 
 plt.figure()
-for i in range(1, farad_eff[0].shape[0]):
-    plt.plot(farad_eff[:, 0], farad_eff[:, i], label=param_name + " = " + str(param_values[i-1]))
+for i in range(1, farad_eff_H2[0].shape[0]):
+    plt.plot(farad_eff_H2[:, 0], farad_eff_H2[:, i], label=param_name + " = " + str(param_values[i-1]))
 
 plt.legend()
-plt.title(r"Faraday efficiency")
+plt.title(r"Faraday efficiency $H_2$")
 plt.xlabel("Time (min)")
-plt.ylabel("Faraday efficiency")
+plt.ylabel(r"Faraday efficiency $H_2$(%)")
 plt.grid(alpha=0.5)
-plt.savefig("Plots/farad_eff.png")
+plt.savefig("Plots/farad_eff_H2.png")
 plt.show()
 
+plt.figure()
+for i in range(1, farad_eff_O2[0].shape[0]):
+    plt.plot(farad_eff_O2[:, 0], farad_eff_O2[:, i], label=param_name + " = " + str(param_values[i-1]))
+
+plt.legend()
+plt.title(r"Faraday efficiency $O_2$")
+plt.xlabel("Time (min)")
+plt.ylabel(r"Faraday efficiency $O_2$(%)")
+plt.grid(alpha=0.5)
+plt.savefig("Plots/farad_eff_O2.png")
+plt.show()
 
 
 # Plot energy efficiency vs Time
@@ -144,30 +164,50 @@ if param_name == "U" or param_name == "I":
     for i in range(1, energy_consumption.shape[0]):
         energy_consumption[i, 1:] = energy_consumption[i-1, 1:] + param_values*U[i, 1:]*(U[i, 0] - U[i-1, 0])*60 # J
     
-    energy_eff = np.zeros(energy_consumption.shape)
-    energy_eff[:, 0] = energy_consumption[:, 0]
-    energy_eff[:, 1:] = 100*((285.8/24.05)*V_H2[:, 1:])/ energy_consumption[:, 1:]
+    energy_eff_H2 = np.zeros(energy_consumption.shape)
+    energy_eff_H2[:, 0] = energy_consumption[:, 0]
+    energy_eff_H2[:, 1:] = 100*((285.8/24.05)*V_H2[:, 1:])/ energy_consumption[:, 1:]
+
+    energy_eff_O2 = np.zeros(energy_consumption.shape)
+    energy_eff_O2[:, 0] = energy_consumption[:, 0]
+    energy_eff_O2[:, 1:] = 100*((2*285.8/(24.05))*V_O2[:, 1:])/ energy_consumption[:, 1:]
 
 else:
     energy_consumption = np.ones(U.shape)
     energy_consumption[:, 0] = U[:, 0]
     energy_consumption[0,1:] = 1*U[0,1:]*U[0,0] # 1A*U*t
     for i in range(1, energy_consumption.shape[0]):
-        energy_consumption[i, 1:] = energy_consumption[i-1, 1:] + param_values*U[i, 1:]*(U[i, 0] - U[i-1, 0])*60
-    
-    energy_eff = np.zeros(energy_consumption.shape)
-    energy_eff[:, 0] = energy_consumption[:, 0]
-    energy_eff[:, 1:] = 100*((285.8/24.05)*V_H2[:, 1:])/ energy_consumption[:, 1:]
+        energy_consumption[i, 1:] = energy_consumption[i-1, 1:] + 1*U[i, 1:]*(U[i, 0] - U[i-1, 0])*60
+
+    energy_eff_H2 = np.zeros(energy_consumption.shape)
+    energy_eff_H2[:, 0] = energy_consumption[:, 0]
+    energy_eff_H2[:, 1:] = 100*((285.8/24.05)*V_H2[:, 1:])/ energy_consumption[:, 1:]
+
+    energy_eff_O2 = np.zeros(energy_consumption.shape)
+    energy_eff_O2[:, 0] = energy_consumption[:, 0]
+    energy_eff_O2[:, 1:] = 100*((2*285.8/(24.05))*V_O2[:, 1:])/ energy_consumption[:, 1:]
 
 
 plt.figure()
-for i in range(1, energy_eff[0].shape[0]):
-    plt.plot(energy_eff[:, 0], energy_eff[:, i], label=param_name + " = " + str(param_values[i-1]))
+for i in range(1, energy_eff_H2[0].shape[0]):
+    plt.plot(energy_eff_H2[:, 0], energy_eff_H2[:, i], label=param_name + " = " + str(param_values[i-1]))
 
 plt.legend()
-plt.title(r"Energy efficiency")
+plt.title(r"Energy efficiency $H_2$")
 plt.xlabel("Time (min)")
-plt.ylabel("Energy efficiency")
+plt.ylabel(r"Energy efficiency $H_2$ (%)")
 plt.grid(alpha=0.5)
-plt.savefig("Plots/energy_eff.png")
+plt.savefig("Plots/energy_eff_H2.png")
+plt.show()
+
+plt.figure()
+for i in range(1, energy_eff_O2[0].shape[0]):
+    plt.plot(energy_eff_O2[:, 0], energy_eff_O2[:, i], label=param_name + " = " + str(param_values[i-1]))
+
+plt.legend()
+plt.title(r"Energy efficiency $O_2$")
+plt.xlabel("Time (min)")
+plt.ylabel(r"Energy efficiency $O_2$ (%)")
+plt.grid(alpha=0.5)
+plt.savefig("Plots/energy_eff_O2.png")
 plt.show()
