@@ -23,7 +23,7 @@ param_values = param_table[param_name]
 # Plot V H2 vs Time
 plt.figure()
 for i in range(1, V_H2[0].shape[0]):
-    plt.plot(V_H2[:, 0], V_H2[:, i], label= param_name + " = " + str(param_values[i-1]))
+    plt.plot(V_H2[:, 0], V_H2[:, i], label= param_name + " = " + str(param_values[i-1]), marker=".")
     for j in range(V_H2.shape[0]-1):
         H2_speed[j, i] = (V_H2[j+1, i] - V_H2[j, i])/(V_H2[j+1, 0] - V_H2[j, 0])
 
@@ -38,7 +38,7 @@ plt.show()
 # Plot V O2 vs Time
 plt.figure()
 for i in range(1, V_O2[0].shape[0]):
-    plt.plot(V_O2[:, 0], V_O2[:, i], label=param_name + " = " + str(param_values[i-1]))
+    plt.plot(V_O2[:, 0], V_O2[:, i], label=param_name + " = " + str(param_values[i-1]), marker=".")
     for j in range(V_O2.shape[0]-1):
         O2_speed[j, i] = (V_O2[j+1, i] - V_O2[j, i])/(V_O2[j+1, 0] - V_O2[j, 0])
 
@@ -53,7 +53,7 @@ plt.show()
 # Plot U vs Time
 plt.figure()
 for i in range(1, U[0].shape[0]):
-    plt.plot(U[:, 0], U[:, i], label=param_name + " = " + str(param_values[i-1]))
+    plt.plot(U[:, 0], U[:, i], label=param_name + " = " + str(param_values[i-1]), marker=".")
 
 plt.legend()
 plt.xlabel("Time (min)")
