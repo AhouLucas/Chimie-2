@@ -41,8 +41,8 @@ plt.figure()
 for i in range(1, V_O2[0].shape[0]):
     plt.plot(V_O2[:, 0], V_O2[:, i], label=param_name + " = " + str(param_values[i-1]), marker=".")
     
-    for i in range(1, V_O2.shape[1]):
-        O2_speed[:,i], _ = np.polyfit(V_O2[:, 0], V_O2[:, i], deg=1)
+    for j in range(1, V_O2.shape[1]):
+        O2_speed[:,j], _ = np.polyfit(V_O2[:, 0], V_O2[:, j], deg=1)
 
 plt.legend()
 plt.title(r"$V_{O_2}$")
