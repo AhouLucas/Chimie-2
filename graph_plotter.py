@@ -24,8 +24,9 @@ param_values = param_table[param_name]
 plt.figure()
 for i in range(1, V_H2[0].shape[0]):
     plt.plot(V_H2[:, 0], V_H2[:, i], label= param_name + " = " + str(param_values[i-1]), marker=".")
-    for j in range(V_H2.shape[0]-1):
-        H2_speed[j, i] = (V_H2[j+1, i] - V_H2[j, i])/(V_H2[j+1, 0] - V_H2[j, 0])
+
+    for j in range(1, V_H2.shape[1]):
+        H2_speed[:,j], _ = np.polyfit(V_H2[:, 0], V_H2[:, j], deg=1)
 
 plt.legend()
 plt.title(r"$V_{H_2}$")
@@ -39,8 +40,9 @@ plt.show()
 plt.figure()
 for i in range(1, V_O2[0].shape[0]):
     plt.plot(V_O2[:, 0], V_O2[:, i], label=param_name + " = " + str(param_values[i-1]), marker=".")
-    for j in range(V_O2.shape[0]-1):
-        O2_speed[j, i] = (V_O2[j+1, i] - V_O2[j, i])/(V_O2[j+1, 0] - V_O2[j, 0])
+    
+    for i in range(1, V_O2.shape[1]):
+        O2_speed[:,i], _ = np.polyfit(V_O2[:, 0], V_O2[:, i], deg=1)
 
 plt.legend()
 plt.title(r"$V_{O_2}$")
@@ -108,7 +110,7 @@ if param_name == "U":
 
     farad_eff_O2 = np.zeros(theorical_speed.shape)
     farad_eff_O2[:, 0] = theorical_speed[:, 0]
-    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]*2)
+    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]/2)
 
 elif param_name == "I":
     theorical_speed = np.zeros(U.shape)
@@ -121,7 +123,7 @@ elif param_name == "I":
 
     farad_eff_O2 = np.zeros(theorical_speed.shape)
     farad_eff_O2[:, 0] = theorical_speed[:, 0]
-    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]*2)
+    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]/2)
     
 else:
     theorical_speed = np.ones(U.shape)
@@ -134,7 +136,7 @@ else:
 
     farad_eff_O2 = np.zeros(theorical_speed.shape)
     farad_eff_O2[:, 0] = theorical_speed[:, 0]
-    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]*2)
+    farad_eff_O2[:, 1:] = 100*O2_speed[:, 1:]/(theorical_speed[:, 1:]/2)
 
 plt.figure()
 for i in range(1, farad_eff_H2[0].shape[0]):
@@ -189,7 +191,7 @@ else:
 
     energy_eff_O2 = np.zeros(energy_consumption.shape)
     energy_eff_O2[:, 0] = energy_consumption[:, 0]
-    energy_eff_O2[:, 1:] = 100*((285.8/(2*24.05))*V_O2[:, 1:])/ energy_consumption[:, 1:]
+    energy_eff_O2[:, 1:] = 100*((2*285.8/(24.05))*V_O2[:, 1:])/ energy_consumption[:, 1:]
 
 
 plt.figure()
