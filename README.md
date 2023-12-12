@@ -15,6 +15,6 @@ sinon entrez les valeurs de I en fonction du temps dans le fichier U_or_I_data.c
 
 3. Faites attention à ce que les temps soient les mêmes dans les 3 fichiers
 
-4. Lancez le script graph_plotter.py et indiquez le nom du paramètre (d, pH, I, U) dans le terminal
+4. Lancez le script graph_plotter.py et indiquez le nom du paramètre (d, pH, I ou U) dans le terminal
 
 5. Les graphiques seront enregistrés dans le dossier Plots
