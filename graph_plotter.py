@@ -14,11 +14,10 @@ param_name = input(">> Enter the parameter name (d, I, pH, U): ")
 param_table = {
     "d": np.array([19, 15, 11, 7]),
     "I": np.array([1, 0.75, 0.5, 0.25]),
-    "pH": np.array([13, 13.5]),
+    "pH": np.array([13, 13.5,14]),
     "U": np.array([30, 20, 10, 5]),
 }
 param_values = param_table[param_name]
-
 
 # Plot V H2 vs Time
 plt.figure(figsize=(10, 5))
