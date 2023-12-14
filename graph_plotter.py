@@ -14,7 +14,7 @@ param_name = input(">> Enter the parameter name (d, I, pH, U): ")
 param_table = {
     "d": np.array([19, 15, 11, 7]),
     "I": np.array([1, 0.75, 0.5, 0.25]),
-    "pH": np.array([13, 13.5, 14]),
+    "pH": np.array([13, 13.5]),
     "U": np.array([30, 20, 10, 5]),
 }
 param_values = param_table[param_name]
@@ -67,8 +67,26 @@ else:
     plt.ylabel("Current (A)")
 
 plt.grid(alpha=0.5)
-plt.savefig("Plots/U.png")
+plt.savefig("Plots/U_time.png")
 plt.show()
+
+
+# Plot U Vs parameters
+plt.figure(figsize=(10, 5))
+plt.plot(param_values, np.mean(U[:, 1:], axis=0), marker=".")
+
+plt.xlabel(param_name)
+if param_name != "U":
+    plt.title(r"$U$")
+    plt.ylabel("Voltage (V)")
+else:
+    plt.title(r"$I$")
+    plt.ylabel("Current (A)")
+
+plt.grid(alpha=0.5)
+plt.savefig("Plots/U_parameter.png")
+plt.show()
+
 
 # Plot H2 speed vs Time
 plt.figure(figsize=(10, 5))
@@ -91,7 +109,7 @@ plt.savefig("Plots/V_H2_O2_speed.png")
 plt.show()
 
 
-# Plot Faraday efficiency vs Time
+# Plot Faraday efficiency vs parameters
 
 if param_name == "U":
     theorical_speed = np.copy(U)
@@ -151,7 +169,7 @@ plt.savefig("Plots/farad_eff_H2_O2.png")
 plt.show()
 
 
-# Plot energy efficiency vs Time
+# Plot energy efficiency vs parameters
 if param_name == "U" or param_name == "I":
     energy_consumption = np.copy(U)
     energy_consumption[0,1:] = param_values*U[0,1:]*U[0,0] # U*I*t or I*U*t
